@@ -18,7 +18,7 @@ ipsilon-server-install \
     --ldap-base-dn="${LDAP_BASEDN}"
 
 # disable ssl redirection as we run behind proxy
-sed -i -e 's/^\([[:space:]]]*\)\(Rewrite.*\)$/\1#\2/' /etc/httpd/conf.d/ipsilon-root.conf
+sed -i -e 's/^\([[:space:]]*\)\(Rewrite.*\)$/\1#\2/' /etc/httpd/conf.d/ipsilon-root.conf
 
 unset LDAP_BASEDN LDAP_URI
 
