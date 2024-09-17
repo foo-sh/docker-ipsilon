@@ -17,6 +17,12 @@ ipsilon-server-install \
     --ldap-bind-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
     --ldap-base-dn="${LDAP_BASEDN}"
 
+# enable proxy support manually
+{
+    echo ""
+    echo "tools.proxy.on = True"
+} >> /etc/ipsilon/root/ipsilon.conf
+
 # disable ssl redirection as we run behind proxy
 sed -i -e 's/^\([[:space:]]*\)\(Rewrite.*\)$/\1#\2/' /etc/httpd/conf.d/ipsilon-root.conf
 
