@@ -10,12 +10,15 @@ fi
 
 ipsilon-server-install \
     --root-instance \
-    --hostname="id.foo.sh" \
+    --hostname="idp.foo.sh" \
     --ldap=yes \
     --ldap-server-url="${LDAP_URI}" \
     --ldap-tls-level=Demand \
     --ldap-bind-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
-    --ldap-base-dn="${LDAP_BASEDN}"
+    --ldap-base-dn="${LDAP_BASEDN}" \
+    --info-ldap=yes \
+    --info-ldap-server-url="${LDAP_URI}" \
+    --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}"
 
 # enable proxy support manually
 {
