@@ -7,6 +7,7 @@ RUN set -eux ; \
         ipsilon \
         ipsilon-authgssapi \
         ipsilon-authldap \
+        python3-mysqlclient \
     ; \
     dnf -y clean all ; \
     rm -rf /var/cache/dnf

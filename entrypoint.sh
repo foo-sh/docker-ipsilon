@@ -8,6 +8,8 @@ if [ -z "${LDAP_URI:-}" ]; then
     LDAP_URI="ldaps://ldap$(echo "$LDAP_BASEDN" | sed -e 's/,\?[[:alpha:]]\+=/\./g')"
 fi
 
+[ "${IPSILON_DB_USER:-}" = "" ] && IPSILON_DB_USER="ipsilon"
+
 ipsilon-server-install \
     --root-instance \
     --hostname="idp.foo.sh" \
@@ -18,7 +20,10 @@ ipsilon-server-install \
     --ldap-base-dn="${LDAP_BASEDN}" \
     --info-ldap=yes \
     --info-ldap-server-url="${LDAP_URI}" \
-    --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}"
+    --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
+    --users-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_USERS}"
+    --transaction-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_TRANSACTIONS}"
+    --samlsessions-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_SESSIONS}"
 
 # enable proxy support manually
 {
@@ -30,5 +35,6 @@ ipsilon-server-install \
 sed -i -e 's/^\([[:space:]]*\)\(Rewrite.*\)$/\1#\2/' /etc/httpd/conf.d/ipsilon-root.conf
 
 unset LDAP_BASEDN LDAP_URI
+unset IPSILON_DB_USER IPSILON_DB_PASS IPSILON_DB_HOST IPSILON_DB_USERS IPSILON_DB_TRANSACTIONS IPSILON_DB_SESSIONS
 
 exec "$@"
