@@ -14,7 +14,7 @@ fi
 [ "${IPSILON_DB_TRANSACTIONS:-}" = "" ] && IPSILON_DB_TRANSACTIONS="ipsilon"
 [ "${IPSILON_DB_SESSIONS:-}" = "" ] && IPSILON_DB_SESSIONS="ipsilon"
 
-install -m 0640 -user root -group ipsilon "$IPSILON_DB_KEY" "/etc/ssl/private/ipsilon.key"
+install -m 0640 --owner root --group ipsilon "$IPSILON_DB_KEY" "/etc/ssl/private/ipsilon.key"
 
 ipsilon-server-install \
     --root-instance \
