@@ -22,9 +22,9 @@ ipsilon-server-install \
     --info-ldap=yes \
     --info-ldap-server-url="${LDAP_URI}" \
     --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
-    --users-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_USERPREFS}?ssl=true&ssl_ca=${IPSILON_DB_CA}" \
-    --transaction-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_TRANSACTIONS}?ssl=true&ssl_ca=${IPSILON_DB_CA}" \
-    --samlsessions-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_SESSIONS}?ssl=true&ssl_ca=${IPSILON_DB_CA}"
+    --users-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_USERPREFS}?ssl=true&ssl_ca=${IPSILON_DB_CA}&ssl_key=${IPSILON_DB_KEY}&ssl_cert=${IPSILON_DB_CERT}" \
+    --transaction-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_TRANSACTIONS}?ssl=true&ssl_ca=${IPSILON_DB_CA}&ssl_key=${IPSILON_DB_KEY}&ssl_cert=${IPSILON_DB_CERT}" \
+    --samlsessions-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_SESSIONS}?ssl=true&ssl_ca=${IPSILON_DB_CA}&ssl_key=${IPSILON_DB_KEY}&ssl_cert=${IPSILON_DB_CERT}"
 
 # enable proxy support manually
 {
