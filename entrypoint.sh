@@ -10,6 +10,9 @@ fi
 
 [ "${IPSILON_DB_USER:-}" = "" ] && IPSILON_DB_USER="ipsilon"
 [ "${IPSILON_DB_CA:-}" = "" ] && IPSILON_DB_CA="/etc/ssl/certs/ca-bundle.crt"
+[ "${IPSILON_DB_USERPREFS:-}" = "" ] && IPSILON_DB_USERPREFS="ipsilon"
+[ "${IPSILON_DB_TRANSACTIONS:-}" = "" ] && IPSILON_DB_TRANSACTIONS="ipsilon"
+[ "${IPSILON_DB_SESSIONS:-}" = "" ] && IPSILON_DB_SESSIONS="ipsilon"
 
 ipsilon-server-install \
     --root-instance \
@@ -36,6 +39,8 @@ ipsilon-server-install \
 sed -i -e 's/^\([[:space:]]*\)\(Rewrite.*\)$/\1#\2/' /etc/httpd/conf.d/ipsilon-root.conf
 
 unset LDAP_BASEDN LDAP_URI
-unset IPSILON_DB_USER IPSILON_DB_PASS IPSILON_DB_HOST IPSILON_DB_USERS IPSILON_DB_TRANSACTIONS IPSILON_DB_SESSIONS
+unset IPSILON_DB_USER IPSILON_DB_PASS IPSILON_DB_HOST
+unset IPSILON_DB_USERS IPSILON_DB_TRANSACTIONS IPSILON_DB_SESSIONS
+unset IPSILON_DB_CA IPSILON_DB_KEY IPSILON_DB_CERT
 
 exec "$@"
