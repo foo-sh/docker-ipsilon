@@ -7,6 +7,7 @@ RUN set -eux ; \
         ipsilon \
         ipsilon-authgssapi \
         ipsilon-authldap \
+        ipsilon-saml2 \
         python3-mysqlclient \
     ; \
     dnf -y clean all ; \
