@@ -9,6 +9,7 @@ if [ -z "${LDAP_URI:-}" ]; then
 fi
 
 [ "${IPSILON_DB_USER:-}" = "" ] && IPSILON_DB_USER="ipsilon"
+[ "${IPSILON_DB_CA:-}" = "" ] && IPSILON_DB_CA="/etc/ssl/certs/ca-bundle.crt"
 
 ipsilon-server-install \
     --root-instance \
@@ -21,9 +22,9 @@ ipsilon-server-install \
     --info-ldap=yes \
     --info-ldap-server-url="${LDAP_URI}" \
     --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
-    --users-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_USERPREFS}" \
-    --transaction-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_TRANSACTIONS}" \
-    --samlsessions-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_SESSIONS}"
+    --users-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_USERPREFS}?ssl=true&ssl_ca=${IPSILON_DB_CA}" \
+    --transaction-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_TRANSACTIONS}?ssl=true&ssl_ca=${IPSILON_DB_CA}" \
+    --samlsessions-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_SESSIONS}?ssl=true&ssl_ca=${IPSILON_DB_CA}"
 
 # enable proxy support manually
 {
