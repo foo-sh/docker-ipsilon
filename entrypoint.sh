@@ -40,6 +40,12 @@ ipsilon-server-install \
 # disable ssl redirection as we run behind proxy
 sed -i -e 's/^\([[:space:]]*\)\(Rewrite.*\)$/\1#\2/' /etc/httpd/conf.d/ipsilon-root.conf
 
+# send apache logs to stdout/stderr
+sed -i \
+    -e 's|^\(\s*CustomLog\s\+\).\+\(\s\+.*\)$|\1/proc/self/fd/1\2|' \
+    -e 's|^\(\s*ErrorLog\s\+\).*|\1/proc/self/fd/2|' \
+    /etc/httpd/conf/httpd.conf
+
 unset LDAP_BASEDN LDAP_URI
 unset IPSILON_DB_USER IPSILON_DB_PASS IPSILON_DB_HOST
 unset IPSILON_DB_USERS IPSILON_DB_TRANSACTIONS IPSILON_DB_SESSIONS
