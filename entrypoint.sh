@@ -30,8 +30,6 @@ ipsilon-server-install \
     --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
     --users-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_USERPREFS}?ssl=true&ssl_ca=${IPSILON_DB_CA}&ssl_key=/etc/ssl/private/ipsilon.key&ssl_cert=${IPSILON_DB_CERT}" \
     --transaction-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_TRANSACTIONS}?ssl=true&ssl_ca=${IPSILON_DB_CA}&ssl_key=/etc/ssl/private/ipsilon.key&ssl_cert=${IPSILON_DB_CERT}" \
-    --saml2=yes \
-    --samlsessions-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_SESSIONS}?ssl=true&ssl_ca=${IPSILON_DB_CA}&ssl_key=/etc/ssl/private/ipsilon.key&ssl_cert=${IPSILON_DB_CERT}" \
     --openid=yes \
     --openid-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_OPENID}?ssl=true&ssl_ca=${IPSILON_DB_CA}&ssl_key=/etc/ssl/private/ipsilon.key&ssl_cert=${IPSILON_DB_CERT}"
 
