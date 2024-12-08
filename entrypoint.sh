@@ -104,6 +104,8 @@ openidc database url = ${_dburi}/${IPSILON_DB_OPENIDC:-ipsilon}${_dbtlsopts}
 openidc static database url = ${_dburi}/${IPSILON_DB_OPENIDC_STATIC:-ipsilon}${_dbtlsopts}
 openidc enabled extensions =
 openidc idp key file = /etc/ipsilon/root/openidc.key
+openidc idp sig key id = ${IPSILON_OPENIDC_KEYID}
+openidc idp subject salt = ${IPSILON_OPENIDC_SALT}
 global enabled = openidc
 
 [authz_config]
