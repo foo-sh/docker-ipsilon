@@ -49,8 +49,7 @@ sed -i \
     /etc/httpd/conf/httpd.conf
 
 unset LDAP_BASEDN LDAP_URI
-unset IPSILON_DB_USER IPSILON_DB_PASS IPSILON_DB_HOST
-unset IPSILON_DB_USERS IPSILON_DB_TRANSACTIONS IPSILON_DB_SESSIONS IPSILON_DB_OPENID
-unset IPSILON_DB_CA IPSILON_DB_KEY IPSILON_DB_CERT
+# shellcheck disable=SC2046
+unset $(env | awk -F= '/^IPSILON_/ { print $1 }')
 
 exec "$@"
