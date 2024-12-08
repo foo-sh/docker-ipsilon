@@ -43,7 +43,7 @@ fi
 _dburi="mysql://${IPSILON_DB_USER:-ipsilon}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}"
 
 if [ ! -r "/etc/ipsilon/openidc.key" ]; then
-    echo "ERROR: Faield to read OpenID Connect private key '/etc/ipsilon/openidc.key'" 1>&2
+    echo "ERROR: Failed to read OpenID Connect private key '/etc/ipsilon/openidc.key'" 1>&2
     exit 1
 fi
 
