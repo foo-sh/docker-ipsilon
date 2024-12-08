@@ -42,6 +42,8 @@ if [ -n "$TLSOPTS" ]; then
     TLSOPTS="$(echo "$TLSOPTS" | cut -c 2-)"
 fi
 
+_dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}"
+
 ipsilon-server-install \
     --root-instance \
     --hostname="idp.foo.sh" \
@@ -53,11 +55,11 @@ ipsilon-server-install \
     --info-ldap=yes \
     --info-ldap-server-url="${LDAP_URI}" \
     --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
-    --users-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_USERPREFS:-ipsilon}?${TLSOPTS}" \
-    --transaction-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_TRANSACTIONS:-ipsilon}?${TLSOPTS}" \
+    --users-dburi="${_dburi}/${IPSILON_DB_USERPREFS:-ipsilon}?${TLSOPTS}" \
+    --transaction-dburi="${_dburi}/${IPSILON_DB_TRANSACTIONS:-ipsilon}?${TLSOPTS}" \
     --openidc=yes \
-    --openidc-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_OPENIDC:-ipsilon}?${TLSOPTS}" \
-    --openidc-static-dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}/${IPSILON_DB_OPENIDC_STATIC:-ipsilon}?${TLSOPTS}"
+    --openidc-dburi="${_dburi}/${IPSILON_DB_OPENIDC:-ipsilon}?${TLSOPTS}" \
+    --openidc-static-dburi="${_dburi}/${IPSILON_DB_OPENIDC_STATIC:-ipsilon}?${TLSOPTS}"
 
 # enable proxy support manually
 {
@@ -75,6 +77,7 @@ sed -i \
     /etc/httpd/conf/httpd.conf
 
 unset LDAP_BASEDN LDAP_URI
+unset _dburi
 # shellcheck disable=SC2046
 unset $(env | awk -F= '/^IPSILON_/ { print $1 }')
 
