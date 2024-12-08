@@ -42,28 +42,75 @@ fi
 
 _dburi="mysql://${IPSILON_DB_USER:-ipsilon}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}"
 
-ipsilon-server-install \
-    --root-instance \
-    --hostname="idp.foo.sh" \
-    --ldap=yes \
-    --ldap-server-url="${LDAP_URI}" \
-    --ldap-tls-level=Demand \
-    --ldap-bind-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
-    --ldap-base-dn="${LDAP_BASEDN}" \
-    --info-ldap=yes \
-    --info-ldap-server-url="${LDAP_URI}" \
-    --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
-    --users-dburi="${_dburi}/${IPSILON_DB_USERPREFS:-ipsilon}${_dbtlsopts}" \
-    --transaction-dburi="${_dburi}/${IPSILON_DB_TRANSACTIONS:-ipsilon}${_dbtlsopts}" \
-    --openidc=yes \
-    --openidc-dburi="${_dburi}/${IPSILON_DB_OPENIDC:-ipsilon}${_dbtlsopts}" \
-    --openidc-static-dburi="${_dburi}/${IPSILON_DB_OPENIDC_STATIC:-ipsilon}${_dbtlsopts}"
+if [ ! -r "/etc/ipsilon/openidc.key" ]; then
+    echo "ERROR: Faield to read OpenID Connect private key '/etc/ipsilon/openidc.key'" 1>&2
+    exit 1
+fi
 
-# enable proxy support manually
-{
-    echo ""
-    echo "tools.proxy.on = True"
-} >> /etc/ipsilon/root/ipsilon.conf
+# run server install with minimal arguments to get files and dirs in place
+ipsilon-server-install --hostname="$IPSILON_HOSTNAME" --root-instance --testauth=yes
+
+# copy openidc key to final place to fix permissions
+install -m 0640 -o root -g ipsilon /etc/ipsilon/openidc.key /etc/ipsilon/root/openidc.key
+
+cat <<EOF > /etc/ipsilon/root/ipsilon.conf
+[global]
+debug = False
+tools.log_request_response.on = False
+template_dir = "templates"
+cache_dir = "/var/cache/ipsilon"
+cleanup_interval = 30
+db.conn.log = False
+db.echo = False
+
+# base.mount = ""
+base.dir = "/usr/share/ipsilon"
+admin.config.db = "configfile:///etc/ipsilon/root/admin.conf"
+user.prefs.db = "${_dburi}/${IPSILON_DB_USERPREFS:-ipsilon}${_dbtlsopts}"
+transactions.db = "${_dburi}/${IPSILON_DB_TRANSACTIONS:-ipsilon}${_dbtlsopts}"
+
+tools.sessions.on = True
+tools.sessions.name = "root_ipsilon_session_id"
+tools.sessions.storage_type = "file"
+tools.sessions.storage_path = "/var/lib/ipsilon/root/sessions"
+tools.sessions.path = ""
+tools.sessions.timeout = 30
+tools.sessions.httponly = True
+tools.sessions.secure = True
+
+tools.proxy.on = True
+EOF
+chmod 640 /etc/ipsilon/root/ipsilon.conf
+chown root:ipsilon /etc/ipsilon/root/ipsilon.conf
+
+cat <<EOF > /etc/ipsilon/root/admin.conf
+[info_config]
+ldap server url = ${LDAP_URI}
+ldap user dn template = uid=%(username)s,ou=People,${LDAP_BASEDN}
+ldap tls = Demand
+ldap base dn = ${LDAP_BASEDN}
+global enabled = ldap
+
+[login_config]
+ldap server url = ${LDAP_URI}
+ldap bind dn template = uid=%(username)s,ou=People,${LDAP_BASEDN}
+ldap tls = Demand
+ldap base dn = ${LDAP_BASEDN}
+global enabled = ldap
+
+[provider_config]
+openidc endpoint url = https://${IPSILON_HOSTNAME}/openidc/
+openidc database url = ${_dburi}/${IPSILON_DB_OPENIDC:-ipsilon}${_dbtlsopts}
+openidc static database url = ${_dburi}/${IPSILON_DB_OPENIDC_STATIC:-ipsilon}${_dbtlsopts}
+openidc enabled extensions =
+openidc idp key file = /etc/ipsilon/root/openidc.key
+global enabled = openidc
+
+[authz_config]
+global enabled = allow
+EOF
+chmod 640 /etc/ipsilon/root/admin.conf
+chown root:ipsilon /etc/ipsilon/root/admin.conf
 
 # disable ssl redirection as we run behind proxy
 sed -i -e 's/^\([[:space:]]*\)\(Rewrite.*\)$/\1#\2/' /etc/httpd/conf.d/ipsilon-root.conf
