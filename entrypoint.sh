@@ -8,8 +8,6 @@ if [ -z "${LDAP_URI:-}" ]; then
     LDAP_URI="ldaps://ldap$(echo "$LDAP_BASEDN" | sed -e 's/,\?[[:alpha:]]\+=/\./g')"
 fi
 
-[ "${IPSILON_DB_USER:-}" = "" ] && IPSILON_DB_USER="ipsilon"
-
 _dbtlsopts=""
 if [ -n "${IPSILON_DB_CA:-}" ]; then
     if [ ! -r "$IPSILON_DB_CA" ]; then
@@ -42,7 +40,7 @@ if [ -n "$_dbtlsopts" ]; then
     _dbtlsopts="?$(echo "$_dbtlsopts" | cut -c 2-)"
 fi
 
-_dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}"
+_dburi="mysql://${IPSILON_DB_USER:-ipsilon}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}"
 
 ipsilon-server-install \
     --root-instance \
