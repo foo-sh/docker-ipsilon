@@ -10,13 +10,13 @@ fi
 
 [ "${IPSILON_DB_USER:-}" = "" ] && IPSILON_DB_USER="ipsilon"
 
-TLSOPTS=""
+_dbtlsopts=""
 if [ -n "${IPSILON_DB_CA:-}" ]; then
     if [ ! -r "$IPSILON_DB_CA" ]; then
         echo "ERROR: Cannot read CA certificate '${IPSILON_DB_CA}'" 1>&2
         exit 1
     fi
-    TLSOPTS="&ssl=true&ssl_ca=${IPSILON_DB_CA}"
+    _dbtlsopts="&ssl=true&ssl_ca=${IPSILON_DB_CA}"
 fi
 
 if [ -n "${IPSILON_DB_KEY:-}" ] && [ -n "${IPSILON_DB_CERT:-}" ]; then
@@ -29,7 +29,7 @@ if [ -n "${IPSILON_DB_KEY:-}" ] && [ -n "${IPSILON_DB_CERT:-}" ]; then
         exit 1
     fi
     install -m 0640 --owner root --group ipsilon "$IPSILON_DB_KEY" "/etc/ssl/private/ipsilon.key"
-    TLSOPTS="${TLSOPTS}&ssl_key=/etc/ssl/private/ipsilon.key&ssl_cert=${IPSILON_DB_CERT}"
+    _dbtlsopts="${_dbtlsopts}&ssl_key=/etc/ssl/private/ipsilon.key&ssl_cert=${IPSILON_DB_CERT}"
 elif [ -n "${IPSILON_DB_KEY:-}" ]; then
     echo "ERROR: Client private key configured but no certificate" 1>&2
     exit 1
@@ -38,8 +38,8 @@ elif [ -n "${IPSILON_DB_CERT:-}" ]; then
     exit 1
 fi
 
-if [ -n "$TLSOPTS" ]; then
-    TLSOPTS="$(echo "$TLSOPTS" | cut -c 2-)"
+if [ -n "$_dbtlsopts" ]; then
+    _dbtlsopts="?$(echo "$_dbtlsopts" | cut -c 2-)"
 fi
 
 _dburi="mysql://${IPSILON_DB_USER}:${IPSILON_DB_PASS}@${IPSILON_DB_HOST}"
@@ -55,11 +55,11 @@ ipsilon-server-install \
     --info-ldap=yes \
     --info-ldap-server-url="${LDAP_URI}" \
     --info-ldap-user-dn-template="uid=%(username)s,ou=People,${LDAP_BASEDN}" \
-    --users-dburi="${_dburi}/${IPSILON_DB_USERPREFS:-ipsilon}?${TLSOPTS}" \
-    --transaction-dburi="${_dburi}/${IPSILON_DB_TRANSACTIONS:-ipsilon}?${TLSOPTS}" \
+    --users-dburi="${_dburi}/${IPSILON_DB_USERPREFS:-ipsilon}${_dbtlsopts}" \
+    --transaction-dburi="${_dburi}/${IPSILON_DB_TRANSACTIONS:-ipsilon}${_dbtlsopts}" \
     --openidc=yes \
-    --openidc-dburi="${_dburi}/${IPSILON_DB_OPENIDC:-ipsilon}?${TLSOPTS}" \
-    --openidc-static-dburi="${_dburi}/${IPSILON_DB_OPENIDC_STATIC:-ipsilon}?${TLSOPTS}"
+    --openidc-dburi="${_dburi}/${IPSILON_DB_OPENIDC:-ipsilon}${_dbtlsopts}" \
+    --openidc-static-dburi="${_dburi}/${IPSILON_DB_OPENIDC_STATIC:-ipsilon}${_dbtlsopts}"
 
 # enable proxy support manually
 {
@@ -77,7 +77,7 @@ sed -i \
     /etc/httpd/conf/httpd.conf
 
 unset LDAP_BASEDN LDAP_URI
-unset _dburi
+unset _dbtlsopts _dburi
 # shellcheck disable=SC2046
 unset $(env | awk -F= '/^IPSILON_/ { print $1 }')
 
