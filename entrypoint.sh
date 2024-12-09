@@ -114,6 +114,9 @@ EOF
 chmod 640 /etc/ipsilon/root/admin.conf
 chown root:ipsilon /etc/ipsilon/root/admin.conf
 
+# run database upgrade manually as install script doesn't have access
+ipsilon-upgrade-database /etc/ipsilon/root/ipsilon.conf
+
 # disable ssl redirection as we run behind proxy
 sed -i -e 's/^\([[:space:]]*\)\(Rewrite.*\)$/\1#\2/' /etc/httpd/conf.d/ipsilon-root.conf
 
