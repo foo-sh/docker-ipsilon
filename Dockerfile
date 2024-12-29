@@ -1,6 +1,11 @@
 FROM rockylinux:9
 
 RUN set -eux ; \
+    groupadd -g 900 -r ipsilon ; \
+    useradd -r -g ipsilon -d /var/lib/ipsilon -s /sbin/nologin \
+        -c "Ipsilon Server" -u 900 ipsilon
+
+RUN set -eux ; \
     dnf -y upgrade ; \
     dnf -y install --nodocs --setopt=install_weak_deps=False epel-release ; \
     dnf -y install --nodocs --setopt=install_weak_deps=False \
