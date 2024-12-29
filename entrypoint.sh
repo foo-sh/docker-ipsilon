@@ -65,7 +65,7 @@ db.echo = False
 
 # base.mount = ""
 base.dir = "/usr/share/ipsilon"
-admin.config.db = configfile:///etc/ipsilon/root/admin.conf
+admin.config.db = "configfile:///etc/ipsilon/root/admin.conf"
 user.prefs.db = "${_dburi}/${IPSILON_DB_USERPREFS:-ipsilon}${_dbtlsopts}"
 transactions.db = "${_dburi}/${IPSILON_DB_TRANSACTIONS:-ipsilon}${_dbtlsopts}"
 
@@ -101,7 +101,7 @@ global enabled = ldap
 [provider_config]
 openidc endpoint url = https://${IPSILON_HOSTNAME}/openidc/
 openidc database url = ${_dburi}/${IPSILON_DB_OPENIDC:-ipsilon}${_dbtlsopts}
-openidc static database url = "configfile:///etc/ipsilon/root/oidc-static.conf"
+openidc static database url = configfile:///etc/ipsilon/root/oidc-static.conf
 openidc enabled extensions =
 openidc idp key file = /etc/ipsilon/root/openidc.key
 openidc idp sig key id = ${IPSILON_OPENIDC_KEYID}
