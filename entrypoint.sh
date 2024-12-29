@@ -65,7 +65,7 @@ db.echo = False
 
 # base.mount = ""
 base.dir = "/usr/share/ipsilon"
-admin.config.db = "configfile:///etc/ipsilon/root/admin.conf"
+admin.config.db = configfile:///etc/ipsilon/root/admin.conf
 user.prefs.db = "${_dburi}/${IPSILON_DB_USERPREFS:-ipsilon}${_dbtlsopts}"
 transactions.db = "${_dburi}/${IPSILON_DB_TRANSACTIONS:-ipsilon}${_dbtlsopts}"
 
