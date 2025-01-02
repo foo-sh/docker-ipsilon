@@ -1,4 +1,4 @@
-FROM rockylinux:9
+FROM fedora:41
 
 RUN set -eux ; \
     groupadd -g 900 -r ipsilon ; \
@@ -7,7 +7,6 @@ RUN set -eux ; \
 
 RUN set -eux ; \
     dnf -y upgrade ; \
-    dnf -y install --nodocs --setopt=install_weak_deps=False epel-release ; \
     dnf -y install --nodocs --setopt=install_weak_deps=False \
         ipsilon \
         ipsilon-authgssapi \
