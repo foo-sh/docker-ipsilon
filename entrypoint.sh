@@ -8,6 +8,10 @@ if [ -z "${LDAP_URI:-}" ]; then
     LDAP_URI="ldaps://ldap$(echo "$LDAP_BASEDN" | sed -e 's/,\?[[:alpha:]]\+=/\./g')"
 fi
 
+if [ -z "${LDAP_BINDDN:-}" ]; then
+    LDAP_BINDDN="uid=ipsilon,ou=ServiceAccounts,ou=System,${LDAP_BASEDN}"
+fi
+
 _dbtlsopts=""
 if [ -n "${IPSILON_DB_CA:-}" ]; then
     if [ ! -r "$IPSILON_DB_CA" ]; then
@@ -89,6 +93,8 @@ ldap server url = ${LDAP_URI}
 ldap user dn template = uid=%(username)s,ou=People,${LDAP_BASEDN}
 ldap tls = Demand
 ldap base dn = ${LDAP_BASEDN}
+ldap bind dn = ${LDAP_BINDDN}
+ldap bind password = ${LDAP_BINDPW}
 global enabled = ldap
 
 [login_config]
@@ -126,7 +132,7 @@ sed -i \
     -e 's|^\(\s*ErrorLog\s\+\).*|\1/proc/self/fd/2|' \
     /etc/httpd/conf/httpd.conf
 
-unset LDAP_BASEDN LDAP_URI
+unset LDAP_BASEDN LDAP_BINDDN LDAP_BINDPW LDAP_URI
 unset _dbtlsopts _dburi
 # shellcheck disable=SC2046
 unset $(env | awk -F= '/^IPSILON_/ { print $1 }')
