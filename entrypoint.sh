@@ -30,8 +30,8 @@ if [ -n "${IPSILON_DB_KEY:-}" ] && [ -n "${IPSILON_DB_CERT:-}" ]; then
         echo "ERROR: Failed to read client certificate '${IPSILON_DB_CERT}'" 1>&2
         exit 1
     fi
-    install -m 0640 --owner root --group ipsilon "$IPSILON_DB_KEY" "/etc/ssl/private/ipsilon.key"
-    _dbtlsopts="${_dbtlsopts}&ssl_key=/etc/ssl/private/ipsilon.key&ssl_cert=${IPSILON_DB_CERT}"
+    install -m 0640 --owner root --group ipsilon "$IPSILON_DB_KEY" "/etc/pki/tls/private/ipsilon.key"
+    _dbtlsopts="${_dbtlsopts}&ssl_key=/etc/pki/tls/private/ipsilon.key&ssl_cert=${IPSILON_DB_CERT}"
 elif [ -n "${IPSILON_DB_KEY:-}" ]; then
     echo "ERROR: Client private key configured but no certificate" 1>&2
     exit 1
