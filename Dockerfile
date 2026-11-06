@@ -1,4 +1,4 @@
-FROM docker.io/library/fedora:44
+FROM docker.io/library/fedora:45
 
 RUN set -eux ; \
     groupadd -g 900 -r ipsilon ; \
